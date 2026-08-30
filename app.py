@@ -111,46 +111,17 @@ except Exception as error:
 
 
 # ============================================================
-# OLLAMA
+# GROQ
 # ============================================================
 
-OLLAMA_URL = os.environ.get(
-    "OLLAMA_BASE_URL",
-    "http://localhost:11434",
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
+
+GROQ_MODEL = os.environ.get(
+    "GROQ_MODEL",
+    "llama-3.3-70b-versatile",
 )
 
-OLLAMA_MODEL = os.environ.get(
-    "OLLAMA_MODEL",
-    "qwen3:4b",
-)
-
-parsed_ollama = urlparse(OLLAMA_URL)
-
-
-@st.cache_data(ttl=15)
-def ollama_is_reachable(
-    host=None,
-    port=None,
-):
-
-    host = host or parsed_ollama.hostname or "localhost"
-    port = port or parsed_ollama.port or 11434
-
-    try:
-
-        with socket.create_connection(
-            (host, port),
-            timeout=1,
-        ):
-            return True
-
-    except OSError:
-
-        return False
-
-
-OLLAMA_UP = ollama_is_reachable()
-
+GROQ_UP = bool(GROQ_API_KEY)
 
 # ============================================================
 # DESIGN TOKENS
@@ -967,14 +938,13 @@ def decision_badge(decision):
     )
 
 
-def ollama_warning():
+def groq_warning():
 
     st.warning(
-        f"⚠️ Can't reach Ollama at `{OLLAMA_URL}`. "
-        f"The AI tracks require the `{OLLAMA_MODEL}` model. "
+        f"⚠️ Groq is not configured. "
+        f"The AI tracks require the `{GROQ_MODEL}` model. "
         "The Dashboard and Projects Explorer still work."
     )
-
 
 def render_metric_card(
     label,
@@ -1104,7 +1074,7 @@ with st.sidebar:
 
     st.divider()
 
-    if OLLAMA_UP:
+    if GROQ_UP:
 
         st.html(
             f"""
@@ -1113,7 +1083,7 @@ with st.sidebar:
                 font-size:12px;
                 font-weight:700;
             ">
-                ● Ollama Online
+                ● Groq Online
             </div>
 
             <div style="
@@ -1121,8 +1091,8 @@ with st.sidebar:
                 font-size:11px;
                 margin-top:5px;
             ">
-                Local open-source LLM
-                ({escape(OLLAMA_MODEL)})
+                Groq-hosted LLM
+                ({escape(GROQ_MODEL)})
             </div>
             """
         )
@@ -1136,7 +1106,7 @@ with st.sidebar:
                 font-size:12px;
                 font-weight:700;
             ">
-                ● Ollama Not Reachable
+                ● Groq Not Configured
             </div>
 
             <div style="
@@ -1144,7 +1114,7 @@ with st.sidebar:
                 font-size:11px;
                 margin-top:5px;
             ">
-                Start Ollama to use AI tracks.
+                Configure the Groq API key to use AI tracks.
             </div>
             """
         )
@@ -1199,13 +1169,13 @@ districts_count_all = (
 
 online_class = (
     "online"
-    if OLLAMA_UP
+    if GROQ_UP
     else "online offline"
 )
 
 online_label = (
     "Local AI System Online"
-    if OLLAMA_UP
+    if GROQ_UP
     else "Local AI System Offline"
 )
 
@@ -1587,9 +1557,9 @@ elif page == "💬 Data Assistant":
     )
 
 
-    if not OLLAMA_UP:
+    if not GROQ_UP:
 
-        ollama_warning()
+        groq_warning()
 
 
     if "track_a_history" not in st.session_state:
@@ -1688,11 +1658,11 @@ elif page == "💬 Data Assistant":
             )
 
 
-        elif not OLLAMA_UP:
+        elif not GROQ_UP:
 
             st.error(
-                "Ollama is not reachable. "
-                "Start Ollama and try again."
+                "Groq is not configured. "
+                "Configure the Groq API key and try again."
             )
 
 
@@ -1778,9 +1748,9 @@ elif page == "⚠️ Risk Audit":
     )
 
 
-    if not OLLAMA_UP:
+    if not GROQ_UP:
 
-        ollama_warning()
+        groq_warning()
 
 
     audit_goal = st.text_area(
@@ -1806,11 +1776,11 @@ elif page == "⚠️ Risk Audit":
             )
 
 
-        elif not OLLAMA_UP:
+        elif not GROQ_UP:
 
             st.error(
-                "Ollama is not reachable. "
-                "Start Ollama and try again."
+                "Groq is not configured. "
+                "Configure the Groq API key and try again."
             )
 
 
@@ -2032,11 +2002,11 @@ elif page == "🤖 Review Board":
         type="primary",
     ):
 
-        if not OLLAMA_UP:
+        if not GROQ_UP:
 
             st.error(
-                "Ollama is not reachable. "
-                "Start Ollama and try again."
+                "Groq is not configured. "
+                "Configure the Groq API key and try again."
             )
 
         else:
@@ -2820,7 +2790,7 @@ elif page == "📊 Projects Explorer":
 st.html(
     f"""
     <div class="footer">
-        BSDI Agentic AI · Qwen3 + Ollama + LangGraph
+        BSDI Agentic AI · Groq + LangGraph
         · Local Open-Source LLM Architecture
     </div>
     """
