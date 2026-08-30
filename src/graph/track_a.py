@@ -2,7 +2,7 @@ import os
 import re
 from typing import Any
 
-from langchain_ollama import ChatOllama
+from langchain_groq import ChatGroq
 
 from src.tools.project_tools import (
     query_projects,
@@ -13,31 +13,25 @@ from src.tools.project_tools import (
 
 
 # ============================================================
-# 1. OLLAMA CONFIGURATION
+# 1. GROQ CONFIGURATION
 # ============================================================
 
-OLLAMA_BASE_URL = os.environ.get(
-    "OLLAMA_BASE_URL",
-    "http://ollama:11434",
-)
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 
-OLLAMA_MODEL = os.environ.get(
-    "OLLAMA_MODEL",
-    "qwen3:4b",
+GROQ_MODEL = os.environ.get(
+    "GROQ_MODEL",
+    "qwen/qwen3-32b",
 )
 
 
 # ============================================================
-# 2. QWEN MODEL
+# 2. QWEN MODEL VIA GROQ
 # ============================================================
 
-llm = ChatOllama(
-    model=OLLAMA_MODEL,
-    base_url=OLLAMA_BASE_URL,
+llm = ChatGroq(
+    model=GROQ_MODEL,
+    api_key=GROQ_API_KEY,
     temperature=0,
-    reasoning=False,
-    disable_streaming=True,
-    num_predict=250,
 )
 
 

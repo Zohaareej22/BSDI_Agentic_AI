@@ -1,30 +1,24 @@
 import os
 
-from langchain_ollama import ChatOllama
+from langchain_groq import ChatGroq
 from langchain_core.tools import StructuredTool
 from langgraph.graph import StateGraph, MessagesState, START
 
 from src.tools.audit_tools import run_audit_check
 
 
-# ==================================================
-# 1. CONNECT TO QWEN
-# ==================================================
-# OLLAMA_BASE_URL / OLLAMA_MODEL are read from the environment so the
-# same code runs whether Ollama is on localhost (dev) or a separate
-# container/host (deployment) — see docker-compose.yml.
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 
-OLLAMA_BASE_URL = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")
-OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "qwen3:4b")
-
-llm = ChatOllama(
-    model=OLLAMA_MODEL,
-    base_url=OLLAMA_BASE_URL,
-    temperature=0,
-    reasoning=False,
-    disable_streaming=True,
+GROQ_MODEL = os.environ.get(
+    "GROQ_MODEL",
+    "llama-3.1-8b-instant",
 )
 
+llm = ChatGroq(
+    model=GROQ_MODEL,
+    api_key=GROQ_API_KEY,
+    temperature=0,
+)
 
 # ==================================================
 # 2. AUDIT TOOL

@@ -12,6 +12,5 @@ openpyxl>=3.1
 # Agent stack (LangGraph + LangChain, local Ollama model)
 langchain>=0.3
 langchain-core>=0.3
-langchain-ollama>=0.3
+langchain-groq>=0.3
 langgraph>=0.2
-ollama>=0.4
