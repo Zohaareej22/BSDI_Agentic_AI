@@ -14,9 +14,6 @@ COPY . .
 
 EXPOSE 10000
 
-ENV OLLAMA_BASE_URL=http://localhost:11434
-ENV OLLAMA_MODEL=qwen3:4b
-
 HEALTHCHECK CMD curl --fail http://localhost:${PORT:-10000}/_stcore/health || exit 1
 
 CMD ["sh", "-c", "streamlit run app.py --server.port=${PORT:-10000} --server.address=0.0.0.0"]
